@@ -16,7 +16,7 @@ def extract_l_channel(img):
     img_l_channel = img_lab[:,:,0]
 
     # Resize original image and grab L channel of resized image
-    resized_rgb = np.asarray(Image.fromarray(img).resize((256, 256)))
+    resized_rgb = np.asarray(Image.fromarray(img).resize((256, 256)), 3)
     resized_lab = color.rgb2lab(resized_rgb)
     resized_l_channel = resized_lab[:,:,0]
 
