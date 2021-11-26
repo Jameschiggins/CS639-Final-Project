@@ -19,14 +19,14 @@ def load_img(path):
 
 def extractLChannel(img):
     # Grab L channel of original image
-    img_labColor = color.rgb2lab(img)
-    img_lChannel = img_labColor[:,:,0]
+    img_lab = color.rgb2lab(img)
+    img_l_channel = img_lab[:,:,0]
 
     # Resize original image and grab L channel of resized image
     resized_rgb = np.asarray(Image.fromarray(img).resize((256, 256)))
-    resized_labColor = color.rgb2lab(resized_rgb)
-    resized_lChannel = resized_labColor[:,:,0]
+    resized_lab = color.rgb2lab(resized_rgb)
+    resized_l_channel = resized_lab[:,:,0]
 
-    originalTensor = torch.Tensor(img_lChannel)[None,None,:,:]
-    resizedTensor = torch.Tensor(resized_lChannel)[None,None,:,:]
-    return (originalTensor, resizedTensor)
+    original_tensor = torch.Tensor(img_l_channel)[None,None,:,:]
+    resized_tensor = torch.Tensor(resized_l_channel)[None,None,:,:]
+    return (original_tensor, resized_tensor)
