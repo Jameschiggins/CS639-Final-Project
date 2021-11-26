@@ -3,13 +3,6 @@ from PIL import Image
 from skimage import color
 import torch
 import torch.nn.functional as F
-from colorizers import *
-
-# load colorizers
-colorizer_eccv16 = eccv16(pretrained=True).eval()
-colorizer_siggraph17 = siggraph17(pretrained=True).eval()
-colorizer_eccv16.cuda()
-colorizer_siggraph17.cuda()
 
 def load_img(path):
     img = np.asarray(Image.open(path))
@@ -17,7 +10,7 @@ def load_img(path):
         img = np.tile(img[:, :, None], 3)
     return img
 
-def extractLChannel(img):
+def extract_l_channel(img):
     # Grab L channel of original image
     img_lab = color.rgb2lab(img)
     img_l_channel = img_lab[:,:,0]
@@ -30,3 +23,14 @@ def extractLChannel(img):
     original_tensor = torch.Tensor(img_l_channel)[None,None,:,:]
     resized_tensor = torch.Tensor(resized_l_channel)[None,None,:,:]
     return (original_tensor, resized_tensor)
+
+def concat_l_ab_channels(original_tensor, ab):
+    img_orig = original_tensor.shape[2:] # One hot tensor that is 1x[1xheightxwidth]
+    img_ab = ab.shape[2:] # One hot tensor that is 1x[1x2xheightxwidth] L & AB with image
+
+    if(img_orig[0]!=img_ab[0] or img_orig[1]!=img_ab[1]):
+        img_ab = F.interpolate(ab, size=img_orig, mode='bilinear')
+
+    result_lab = torch.cat((img_orig, img_ab), dim=1)
+    result_lab_t = result_lab.cpu().numpy()[0,...].transpose((1,2,0))
+    return color.lab2rgb(result_lab_t)
