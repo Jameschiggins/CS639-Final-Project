@@ -16,7 +16,7 @@ def extract_l_channel(img):
     img_l_channel = img_lab[:,:,0]
 
     # Resize original image and grab L channel of resized image
-    resized_rgb = np.asarray(Image.fromarray(img).resize((256, 256)), 3)
+    resized_rgb = np.asarray(Image.fromarray(img).resize((256, 256), 3))
     resized_lab = color.rgb2lab(resized_rgb)
     resized_l_channel = resized_lab[:,:,0]
 
@@ -29,8 +29,10 @@ def concat_l_ab_channels(original_tensor, ab):
     img_ab = ab.shape[2:] # One hot tensor that is 1x[1x2xheightxwidth] L & AB with image
 
     if(img_orig[0]!=img_ab[0] or img_orig[1]!=img_ab[1]):
-        img_ab = F.interpolate(ab, size=img_orig, mode='bilinear')
+        result_ab = F.interpolate(ab, size=img_orig, mode='bilinear')
+    else:
+        result_ab = ab
 
-    result_lab = torch.cat((img_orig, img_ab), dim=1)
-    result_lab_t = result_lab.cpu().numpy()[0,...].transpose((1,2,0))
+    result_lab = torch.cat((original_tensor, result_ab), dim=1)
+    result_lab_t = result_lab.data.cpu().numpy()[0,...].transpose((1,2,0))
     return color.lab2rgb(result_lab_t)
