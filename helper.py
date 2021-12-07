@@ -5,7 +5,7 @@ import torch
 import torch.nn.functional as F
 
 def load_img(path):
-    img = np.asarray(Image.open(path))
+    img = np.asarray(Image.open(path).convert('L'))
     if(img.ndim == 2):
         img = np.tile(img[:, :, None], 3)
     return img
