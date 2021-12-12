@@ -36,3 +36,25 @@ def concat_l_ab_channels(original_tensor, ab):
     result_lab = torch.cat((original_tensor, result_ab), dim=1)
     result_lab_t = result_lab.data.cpu().numpy()[0,...].transpose((1,2,0))
     return color.lab2rgb(result_lab_t)
+
+def pixelAccuracy(imgColor, imgGround):
+    correct = 0
+    for i in range(np.shape(imgGround)[0]):
+        for j in range (np.shape(imgGround)[1]):
+            for k in range (np.shape(imgGround)[2]):
+                if abs(imgGround[i,j,k] - imgColor[i,j,k]) < 100:
+                    correct = correct + 1
+
+    accuracy = correct / (np.shape(imgGround)[2] * np.shape(imgGround)[1] * np.shape(imgGround)[0])
+
+    return accuracy
+
+    # labeled = torch.sum(imgGround > 0).float()
+    # correct = torch.sum((imgColor == imgGround) * (imgGround > 0)).float()
+    # accuracy = correct / (labeled + 1e-10)
+
+    # print(imgColor)
+    # print(imgGround)
+
+
+    # return accuracy, correct, labeled
