@@ -5,10 +5,13 @@ import torch
 import torch.nn.functional as F
 
 def load_img(path):
-    img = np.asarray(Image.open(path).convert('L'))
+    img = np.asarray(Image.open(path))
+    grayscale_img = np.asarray(Image.open(path).convert('L'))
     if(img.ndim == 2):
         img = np.tile(img[:, :, None], 3)
-    return img
+    if(grayscale_img.ndim == 2):
+        grayscale_img = np.tile(grayscale_img[:, :, None], 3)
+    return (img, grayscale_img)
 
 def extract_l_channel(img):
     # Grab L channel of original image
@@ -42,7 +45,7 @@ def pixelAccuracy(imgColor, imgGround):
     for i in range(np.shape(imgGround)[0]):
         for j in range (np.shape(imgGround)[1]):
             for k in range (np.shape(imgGround)[2]):
-                if abs(imgGround[i,j,k] - imgColor[i,j,k]) < 100:
+                if abs(imgGround[i,j,k] - imgColor[i,j,k]) < 0.05:
                     correct = correct + 1
 
     accuracy = correct / (np.shape(imgGround)[2] * np.shape(imgGround)[1] * np.shape(imgGround)[0])
