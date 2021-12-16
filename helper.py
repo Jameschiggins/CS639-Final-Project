@@ -51,13 +51,3 @@ def pixelAccuracy(imgColor, imgGround):
     accuracy = correct / (np.shape(imgGround)[2] * np.shape(imgGround)[1] * np.shape(imgGround)[0])
 
     return accuracy
-
-    # labeled = torch.sum(imgGround > 0).float()
-    # correct = torch.sum((imgColor == imgGround) * (imgGround > 0)).float()
-    # accuracy = correct / (labeled + 1e-10)
-
-    # print(imgColor)
-    # print(imgGround)
-
-
-    # return accuracy, correct, labeled
